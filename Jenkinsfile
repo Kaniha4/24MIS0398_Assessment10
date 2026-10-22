@@ -40,7 +40,7 @@ pipeline {
                 expression { params.BUILD_TYPE == 'DOCKER' }
             }
             steps {
-                bat 'docker build -t ewaste-portal:v1 .'
+                bat '"C:\\Users\\91822\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t ewaste-portal:v1 .'
             }
         }
 
@@ -49,7 +49,7 @@ pipeline {
                 expression { params.BUILD_TYPE == 'DOCKER' }
             }
             steps {
-                bat 'docker image inspect ewaste-portal:v1'
+                bat '"C:\\Users\\91822\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" image inspect ewaste-portal:v1'
             }
         }
 
