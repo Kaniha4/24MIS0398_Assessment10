@@ -5,7 +5,11 @@ pipeline {
     parameters {
         choice(name: 'BUILD_TYPE',
                choices: ['TEST', 'DOCKER'],
-               description: 'Choose the pipeline operation')
+               description: 'Select build type')
+    }
+
+    environment {
+        IMAGE_NAME = 'ewaste-portal'
     }
 
     stages {
@@ -17,7 +21,7 @@ pipeline {
 
         stage('Parallel Tests') {
             parallel {
-                stage('HTML File Check') {
+                stage('HTML Check') {
                     steps {
                         bat 'if exist index.html (echo HTML file found) else (exit 1)'
                     }
@@ -36,13 +40,23 @@ pipeline {
                 expression { params.BUILD_TYPE == 'DOCKER' }
             }
             steps {
-                bat 'docker build -t ewaste-portal:latest .'
+                bat 'docker build -t ewaste-portal:v1 .'
+            }
+        }
+
+        stage('Test Application') {
+            when {
+                expression { params.BUILD_TYPE == 'DOCKER' }
+            }
+            steps {
+                bat 'docker image inspect ewaste-portal:v1'
             }
         }
 
         stage('Archive Artifacts') {
             steps {
-                archiveArtifacts artifacts: 'index.html,Dockerfile,Jenkinsfile', fingerprint: true
+                archiveArtifacts artifacts: 'index.html,Dockerfile,Jenkinsfile,deployment.yaml',
+                                 fingerprint: true
             }
         }
     }
