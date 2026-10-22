@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>E-Waste Collection Portal</title>
+<style>
+body{font-family:Arial;background:#eef5ef;margin:0;color:#234}
+header{background:#176b45;color:white;text-align:center;padding:20px}
+main{padding:20px}
+.centres{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px}
+.card{background:white;padding:15px;border-radius:10px;box-shadow:0 2px 5px #bbb}
+.status{color:green;font-weight:bold}
+</style>
+</head>
+<body>
+<header>
+<h1>E-Waste Collection and Recycling Portal</h1>
+<p>Recycle electronic waste for a cleaner city</p>
+</header>
+<main>
+<h2>Collection Centres</h2>
+<div class="centres" id="centres"></div>
+</main>
+<script>
+let centres=[
+["Green Earth Centre","Anna Nagar","Mobiles, Laptops, Batteries","Mon-Fri, 9 AM-5 PM","Remove personal data before disposal","Recycled"],
+["City E-Waste Hub","T. Nagar","Televisions, Computers, Mobiles","Mon-Sat, 10 AM-6 PM","Keep screens intact","Under Recycling"],
+["EcoCycle Point","Velachery","Laptops, Chargers, Batteries","Tue-Sun, 9 AM-4 PM","Remove SIM cards and back up files","Awaiting Processing"],
+["Clean Tech Centre","Adyar","Televisions, Printers, Computers","Mon-Fri, 10 AM-5 PM","Keep devices dry and undamaged","Recycled"],
+["Future Green Facility","Tambaram","Mobiles, Batteries, Laptops, TVs","Wed-Sun, 9 AM-6 PM","Separate batteries and accessories","Under Recycling"]
+];
+document.getElementById("centres").innerHTML=centres.map(c=>`
+<div class="card">
+<h3>${c[0]}</h3>
+<p><b>Location:</b> ${c[1]}</p>
+<p><b>Accepted Devices:</b> ${c[2]}</p>
+<p><b>Schedule:</b> ${c[3]}</p>
+<p><b>Instructions:</b> ${c[4]}</p>
+<p><b>Processing Status:</b> <span class="status">${c[5]}</span></p>
+</div>`).join("");
+</script>
+</body>
+</html>
