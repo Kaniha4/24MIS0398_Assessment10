@@ -9,7 +9,8 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = 'ewaste-portal'
+        DOCKER_EXE = 'C:\\Users\\91822\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
+        IMAGE_NAME = 'kaniha4/ewaste-portal'
     }
 
     stages {
@@ -40,7 +41,7 @@ pipeline {
                 expression { params.BUILD_TYPE == 'DOCKER' }
             }
             steps {
-                bat '"C:\\Users\\91822\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t ewaste-portal:v1 .'
+                bat '"%DOCKER_EXE%" build -t ewaste-portal:v1 .'
             }
         }
 
@@ -49,7 +50,32 @@ pipeline {
                 expression { params.BUILD_TYPE == 'DOCKER' }
             }
             steps {
-                bat '"C:\\Users\\91822\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" image inspect ewaste-portal:v1'
+                bat '"%DOCKER_EXE%" image inspect ewaste-portal:v1'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            when {
+                expression { params.BUILD_TYPE == 'DOCKER' }
+            }
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_TOKEN'
+                )]) {
+                    powershell '''
+                        $docker = $env:DOCKER_EXE
+                        $env:DOCKER_TOKEN | & $docker login --username $env:DOCKER_USER --password-stdin
+                        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+                        & $docker tag ewaste-portal:v1 "$env:IMAGE_NAME:v1"
+                        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+                        & $docker push "$env:IMAGE_NAME:v1"
+                        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                    '''
+                }
             }
         }
 
